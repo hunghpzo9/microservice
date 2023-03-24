@@ -1,0 +1,60 @@
+2022-10-20 22:40:28.873  INFO 20852 --- [main] c.e.e.Elasticsearch1Application          : Starting Elasticsearch1Application using Java 11.0.14.1 on MRHUNG with PID 20852 (D:\Works\SpringBoots\elasticsearch1\target\classes started by Administrator in D:\Works\SpringBoots\elasticsearch1)
+2022-10-20 22:40:28.875  INFO 20852 --- [main] c.e.e.Elasticsearch1Application          : No active profile set, falling back to 1 default profile: "default"
+2022-10-20 22:40:29.436  INFO 20852 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2022-10-20 22:40:29.441  INFO 20852 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2022-10-20 22:40:29.443  INFO 20852 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.68]
+2022-10-20 22:40:29.497  INFO 20852 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2022-10-20 22:40:29.497  INFO 20852 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 586 ms
+2022-10-20 22:40:29.709  INFO 20852 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2022-10-20 22:40:29.717  INFO 20852 --- [main] c.e.e.Elasticsearch1Application          : Started Elasticsearch1Application in 1.194 seconds (JVM running for 2.053)
+2022-10-20 22:43:51.973  INFO 18544 --- [main] c.e.e.Elasticsearch1Application          : Starting Elasticsearch1Application using Java 11.0.14.1 on MRHUNG with PID 18544 (D:\Works\SpringBoots\elasticsearch1\target\classes started by Administrator in D:\Works\SpringBoots\elasticsearch1)
+2022-10-20 22:43:51.975  INFO 18544 --- [main] c.e.e.Elasticsearch1Application          : No active profile set, falling back to 1 default profile: "default"
+2022-10-20 22:43:52.539  INFO 18544 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2022-10-20 22:43:52.546  INFO 18544 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2022-10-20 22:43:52.546  INFO 18544 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.68]
+2022-10-20 22:43:52.606  INFO 18544 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2022-10-20 22:43:52.606  INFO 18544 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 598 ms
+2022-10-20 22:43:52.856  INFO 18544 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2022-10-20 22:43:52.864  INFO 18544 --- [main] c.e.e.Elasticsearch1Application          : Started Elasticsearch1Application in 1.289 seconds (JVM running for 2.191)
+2022-10-20 22:43:57.945  INFO 18544 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2022-10-20 22:43:57.946  INFO 18544 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2022-10-20 22:43:57.947  INFO 18544 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
+2022-10-20 22:43:57.961  INFO 18544 --- [http-nio-8080-exec-1] c.e.e.controller.MainController          : 123123
+2022-10-20 22:43:58.481  INFO 18544 --- [http-nio-8080-exec-4] c.e.e.controller.MainController          : 123123
+2022-10-20 22:47:28.875  INFO 17240 --- [main] c.e.e.Elasticsearch1Application          : Starting Elasticsearch1Application using Java 11.0.14.1 on MRHUNG with PID 17240 (D:\Works\SpringBoots\elasticsearch1\target\classes started by Administrator in D:\Works\SpringBoots\elasticsearch1)
+2022-10-20 22:47:28.877  INFO 17240 --- [main] c.e.e.Elasticsearch1Application          : No active profile set, falling back to 1 default profile: "default"
+2022-10-20 22:47:29.473  INFO 17240 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2022-10-20 22:47:29.479  INFO 17240 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2022-10-20 22:47:29.479  INFO 17240 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.68]
+2022-10-20 22:47:29.540  INFO 17240 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2022-10-20 22:47:29.540  INFO 17240 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 629 ms
+2022-10-20 22:47:29.775  INFO 17240 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2022-10-20 22:47:29.783  INFO 17240 --- [main] c.e.e.Elasticsearch1Application          : Started Elasticsearch1Application in 1.285 seconds (JVM running for 2.208)
+2022-10-20 22:48:07.372  INFO 1336 --- [main] c.e.e.Elasticsearch1Application          : Starting Elasticsearch1Application using Java 11.0.14.1 on MRHUNG with PID 1336 (D:\Works\SpringBoots\elasticsearch1\target\classes started by Administrator in D:\Works\SpringBoots\elasticsearch1)
+2022-10-20 22:48:07.374  INFO 1336 --- [main] c.e.e.Elasticsearch1Application          : No active profile set, falling back to 1 default profile: "default"
+2022-10-20 22:48:07.981  INFO 1336 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2022-10-20 22:48:07.987  INFO 1336 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2022-10-20 22:48:07.988  INFO 1336 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.68]
+2022-10-20 22:48:08.059  INFO 1336 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2022-10-20 22:48:08.060  INFO 1336 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 642 ms
+2022-10-20 22:48:08.296  INFO 1336 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2022-10-20 22:48:08.305  INFO 1336 --- [main] c.e.e.Elasticsearch1Application          : Started Elasticsearch1Application in 1.283 seconds (JVM running for 2.208)
+2022-10-20 22:48:14.972  INFO 1336 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2022-10-20 22:48:14.973  INFO 1336 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2022-10-20 22:48:14.974  INFO 1336 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2022-10-20 22:48:14.987  INFO 1336 --- [http-nio-8080-exec-1] c.e.e.controller.MainController          : 123123
+2022-10-20 22:48:35.618  INFO 13404 --- [main] c.e.e.Elasticsearch1Application          : Starting Elasticsearch1Application using Java 11.0.14.1 on MRHUNG with PID 13404 (D:\Works\SpringBoots\elasticsearch1\target\classes started by Administrator in D:\Works\SpringBoots\elasticsearch1)
+2022-10-20 22:48:35.620  INFO 13404 --- [main] c.e.e.Elasticsearch1Application          : No active profile set, falling back to 1 default profile: "default"
+2022-10-20 22:48:36.236  INFO 13404 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2022-10-20 22:48:36.241  INFO 13404 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2022-10-20 22:48:36.241  INFO 13404 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.68]
+2022-10-20 22:48:36.300  INFO 13404 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2022-10-20 22:48:36.301  INFO 13404 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 649 ms
+2022-10-20 22:48:36.524  INFO 13404 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2022-10-20 22:48:36.531  INFO 13404 --- [main] c.e.e.Elasticsearch1Application          : Started Elasticsearch1Application in 1.26 seconds (JVM running for 2.167)
+2022-10-20 23:08:35.552  INFO 13404 --- [http-nio-8080-exec-3] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2022-10-20 23:08:35.554  INFO 13404 --- [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2022-10-20 23:08:35.555  INFO 13404 --- [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2022-10-20 23:08:35.576  INFO 13404 --- [http-nio-8080-exec-3] c.e.e.controller.MainController          : 123123
+2022-10-20 23:10:15.827  INFO 13404 --- [http-nio-8080-exec-5] c.e.e.controller.MainController          : 123123
+2022-10-20 23:13:54.825  INFO 13404 --- [http-nio-8080-exec-7] c.e.e.controller.MainController          : 123123
