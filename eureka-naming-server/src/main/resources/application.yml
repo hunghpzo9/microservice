@@ -1,0 +1,26 @@
+server:
+  port: 8100
+
+spring:
+  application:
+    name: AuthService
+  datasource:
+    url: jdbc:mariadb://192.168.1.89:3306/remylia_auth
+    username: root
+    password: root
+    driver-class-name: org.mariadb.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      idle-timeout: 10000
+      minimum-idle: 5
+      connection-timeout: 15000
+      pool-name: hikari-pool
+      max-lifetime: 60000
+
+eureka:
+  renewalPercentThreshold: 0.85
+  instance:
+    hostname: localhost
+  client:
+    register-with-eureka: false
+    fetch-registry: false
