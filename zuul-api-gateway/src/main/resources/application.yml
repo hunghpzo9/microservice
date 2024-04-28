@@ -6,6 +6,15 @@ spring:
     name: zuul-api-gateway
   main:
     web-application-type: reactive
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/authService/**
+          filters:
+            - StripPrefix=1
 
 eureka:
   client:

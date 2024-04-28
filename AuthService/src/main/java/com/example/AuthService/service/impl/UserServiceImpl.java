@@ -1,24 +1,21 @@
 package com.example.AuthService.service.impl;
 
-import com.example.AuthService.domain.User;
-import com.example.AuthService.domain.dto.KeyPairDTO;
 import com.example.AuthService.domain.dto.inDTO.UserInDTO;
 import com.example.AuthService.domain.dto.UserDTO;
 import com.example.AuthService.domain.dto.outDTO.UserOutDTO;
+import com.example.AuthService.exception.ErrorException;
+import com.example.AuthService.exception.GlobalException;
 import com.example.AuthService.repository.UserRepository;
 import com.example.AuthService.service.JWTService;
 import com.example.AuthService.service.KeyTokenService;
 import com.example.AuthService.service.UserService;
 import com.example.AuthService.utils.Const;
 import com.example.AuthService.utils.DataUtils;
-import com.example.AuthService.utils.IdGenerator;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -58,61 +55,66 @@ public class UserServiceImpl implements UserService {
                 outDTO.setMessage(Const.RESPONSE_MESSAGE.DATA_INVALID);
                 return outDTO;
             }
-
-            String email = inDTO.getEmail().trim().toString();
-            String userName = inDTO.getUserName().trim().toString();
-            String password = inDTO.getPassword().trim().toString();
-
-            if (!EmailValidator.getInstance().isValid(email)) {
-                outDTO.setCode(Const.RESPONSE_CODE.EMAIL_INVALID);
-                outDTO.setMessage(Const.RESPONSE_MESSAGE.EMAIL_INVALID);
-                return outDTO;
-            }
-            if (!isPasswordStrong(password, userName, email)) {
-                outDTO.setCode(Const.RESPONSE_CODE.PASSWORD_WEAK);
-                outDTO.setMessage(Const.RESPONSE_MESSAGE.PASSWORD_WEAK);
-                return outDTO;
+            if(3==3){
+                throw new GlobalException(HttpStatus.INTERNAL_SERVER_ERROR,
+                        "004",
+                        "Error server");
             }
 
-            if (findUserByEmail(email, Const.Status.ACTIVE.name()) != null) {
-                outDTO.setCode(Const.RESPONSE_CODE.EMAIL_EXISTED);
-                outDTO.setMessage(Const.RESPONSE_MESSAGE.EMAIL_EXISTED);
-                return outDTO;
-            }
-
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            Long userId = IdGenerator.nextId();
-            UserDTO userDTO = new UserDTO();
-            userDTO.setId(userId);
-            userDTO.setUserName(userName);
-            userDTO.setEmail(email);
-            userDTO.setPassword(passwordEncoder.encode(password));
-            userDTO.setStatus(Const.Status.ACTIVE.name());
-            userRepository.save(new User(userDTO));
-
-            KeyPairDTO keyPair = keyTokenService.getKeyPair();
-            if (keyPair == null) {
-                outDTO.setCode(Const.RESPONSE_CODE.ERROR);
-                outDTO.setMessage(Const.RESPONSE_MESSAGE.ERROR);
-                return outDTO;
-            }
-
-            keyTokenService.createNewKeyToken(keyPair,userId);
-//            String accessToken = jwtService.generateToken(userId.toString(),keyPair, Const.TOKEN.ACCESS_TOKEN);
-//            String refreshToken = jwtService.generateToken(userId.toString(),keyPair,Const.TOKEN.REFRESH_TOKEN);
-
-//            if(DataUtils.isNullOrEmpty(accessToken) || DataUtils.isNullOrEmpty(refreshToken)){
+//            String email = inDTO.getEmail().trim().toString();
+//            String userName = inDTO.getUserName().trim().toString();
+//            String password = inDTO.getPassword().trim().toString();
+//
+//            if (!EmailValidator.getInstance().isValid(email)) {
+//                outDTO.setCode(Const.RESPONSE_CODE.EMAIL_INVALID);
+//                outDTO.setMessage(Const.RESPONSE_MESSAGE.EMAIL_INVALID);
+//                return outDTO;
+//            }
+//            if (!isPasswordStrong(password, userName, email)) {
+//                outDTO.setCode(Const.RESPONSE_CODE.PASSWORD_WEAK);
+//                outDTO.setMessage(Const.RESPONSE_MESSAGE.PASSWORD_WEAK);
+//                return outDTO;
+//            }
+//
+//            if (findUserByEmail(email, Const.Status.ACTIVE.name()) != null) {
+//                outDTO.setCode(Const.RESPONSE_CODE.EMAIL_EXISTED);
+//                outDTO.setMessage(Const.RESPONSE_MESSAGE.EMAIL_EXISTED);
+//                return outDTO;
+//            }
+//
+//            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+//            Long userId = IdGenerator.nextId();
+//            UserDTO userDTO = new UserDTO();
+//            userDTO.setId(userId);
+//            userDTO.setUserName(userName);
+//            userDTO.setEmail(email);
+//            userDTO.setPassword(passwordEncoder.encode(password));
+//            userDTO.setStatus(Const.Status.ACTIVE.name());
+//            userRepository.save(new User(userDTO));
+//
+//            KeyPairDTO keyPair = keyTokenService.getKeyPair();
+//            if (keyPair == null) {
 //                outDTO.setCode(Const.RESPONSE_CODE.ERROR);
 //                outDTO.setMessage(Const.RESPONSE_MESSAGE.ERROR);
 //                return outDTO;
 //            }
-
-            List<UserDTO> userDTOList = new ArrayList<>();
-            userDTOList.add(userDTO);
-            outDTO.setUserDTOList(userDTOList);
-
-            outDTO.setCode(Const.RESPONSE_CODE.CREATED);
-            outDTO.setMessage(Const.RESPONSE_MESSAGE.SIGN_UP_SUCCESS);
+//
+//            keyTokenService.createNewKeyToken(keyPair,userId);
+////            String accessToken = jwtService.generateToken(userId.toString(),keyPair, Const.TOKEN.ACCESS_TOKEN);
+////            String refreshToken = jwtService.generateToken(userId.toString(),keyPair,Const.TOKEN.REFRESH_TOKEN);
+//
+////            if(DataUtils.isNullOrEmpty(accessToken) || DataUtils.isNullOrEmpty(refreshToken)){
+////                outDTO.setCode(Const.RESPONSE_CODE.ERROR);
+////                outDTO.setMessage(Const.RESPONSE_MESSAGE.ERROR);
+////                return outDTO;
+////            }
+//
+//            List<UserDTO> userDTOList = new ArrayList<>();
+//            userDTOList.add(userDTO);
+//            outDTO.setUserDTOList(userDTOList);
+//
+//            outDTO.setCode(Const.RESPONSE_CODE.CREATED);
+//            outDTO.setMessage(Const.RESPONSE_MESSAGE.SIGN_UP_SUCCESS);
         } catch (Exception e) {
             outDTO.setCode(Const.RESPONSE_CODE.ERROR);
             outDTO.setMessage(Const.RESPONSE_MESSAGE.ERROR);

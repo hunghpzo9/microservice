@@ -13,8 +13,6 @@ public class BaseOutDTO {
     private HttpStatus httpStatus;
     private String code;
     private String message;
-
-
     public void setCode(String code) {
         this.code = code;
         switch(code){
