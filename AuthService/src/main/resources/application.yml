@@ -22,3 +22,12 @@ eureka:
     enabled: true
     serviceUrl:
       defaultZone: http://localhost:8100/eureka
+
+error-codes:
+  SUCCESS: 200
+  CREATED: 201
+  DATA_INVALID: 400
+  EMAIL_INVALID: 400
+  PASSWORD_WEAK: 400
+  EMAIL_EXISTED: 400
+  INTERNAL_ERROR: 500
