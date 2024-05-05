@@ -1,6 +1,7 @@
 package com.example.AuthService.service.impl;
 
 import com.example.AuthService.domain.dto.KeyPairDTO;
+import com.example.AuthService.service.AsymmetricKeyService;
 import com.example.AuthService.service.JWTService;
 import com.example.AuthService.service.KeyTokenService;
 import com.example.AuthService.utils.Const;
@@ -25,7 +26,7 @@ import java.util.Date;
 @Slf4j
 public class JWTServiceImpl implements JWTService {
     @Autowired
-    KeyTokenService keyTokenService;
+    AsymmetricKeyService asymmetricKeyService;
     public static final long ACCESS_TOKEN_VALIDITY = 1000 * 60 * 60 * 1L;
     public static final long REFRESH_TOKEN_VALIDITY = 1000 * 60 * 60 * 24L;
 
@@ -38,7 +39,7 @@ public class JWTServiceImpl implements JWTService {
                     .setSubject(payload)
                     .setIssuedAt(new Date())
                     .setExpiration(expireDate)
-                    .signWith(SignatureAlgorithm.RS256, keyTokenService.generateJwtKeyEncryption(keyPair.getPrivateKey())).compact();
+                    .signWith(SignatureAlgorithm.RS256, asymmetricKeyService.generateJwtKeyEncryption(keyPair.getPrivateKey())).compact();
 
 //            var claims = Jwts.parser().
 //                    setSigningKey(keyTokenService.generateJwtKeyDecryption(keyPair.getPublicKey()))
