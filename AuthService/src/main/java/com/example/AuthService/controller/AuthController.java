@@ -31,10 +31,15 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(
-            @RequestBody LoginInDTO inDTO) {
+    public ResponseEntity<?> login(@RequestBody LoginInDTO inDTO) {
 
         LoginOutDTO outDTO = authService.login(inDTO);
+        return new ResponseEntityOutDTO(outDTO);
+    }
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader(Const.API_HEADER.CLIENT_ID) Long userId) {
+
+        BaseOutDTO outDTO = authService.logout(userId);
         return new ResponseEntityOutDTO(outDTO);
     }
 }
