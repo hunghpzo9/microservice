@@ -29,7 +29,7 @@ public class KeyTokenServiceImpl implements KeyTokenService {
     private KeyTokenRepository keyTokenRepository;
 
     @Override
-    public BaseOutDTO createNewKeyToken(KeyPairDTO keyPair, Long userId) {
+    public BaseOutDTO createNewKeyToken(KeyPairDTO keyPair, Long userId,String refreshToken) {
         BaseOutDTO outDTO = new BaseOutDTO();
         try {
             if (userId == null) {
@@ -48,8 +48,15 @@ public class KeyTokenServiceImpl implements KeyTokenService {
             }
 
             KeyTokenDTO keyTokenDTO = new KeyTokenDTO();
+            KeyToken keyToken = keyTokenRepository.findByUserId(userId);
+            if(keyToken != null){
+                keyTokenDTO.setId(keyToken.getId());
+                keyTokenDTO.setCreateDate(keyToken.getCreateDate());
+            }
             keyTokenDTO.setUserId(userId);
             keyTokenDTO.setPublicKey(keyPair.getPublicKey());
+            keyTokenDTO.setPrivateKey(keyPair.getPrivateKey());
+            keyTokenDTO.setRefreshToken(refreshToken);
             keyTokenDTO.setStatus(Const.Status.ACTIVE.name());
             keyTokenRepository.save(new KeyToken(keyTokenDTO));
 

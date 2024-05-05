@@ -7,6 +7,5 @@ import com.example.AuthService.domain.dto.outDTO.UserOutDTO;
 
 public interface UserService {
     UserDTO findUserByEmail(String email,String status);
-    UserOutDTO signUp(UserInDTO inDTO);
 
 }

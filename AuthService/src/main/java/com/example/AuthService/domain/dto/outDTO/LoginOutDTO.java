@@ -1,5 +1,6 @@
 package com.example.AuthService.domain.dto.outDTO;
 
+import com.example.AuthService.domain.dto.LoginDTO;
 import com.example.AuthService.domain.dto.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,6 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class UserOutDTO extends BaseOutDTO implements Serializable {
-    List<UserDTO> userDTOList;
+public class LoginOutDTO extends BaseOutDTO implements Serializable {
+    List<LoginDTO> loginDTOList;
 }

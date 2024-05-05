@@ -4,18 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class KeyTokenDTO {
-    private Long id;
+@Data
+public class LoginDTO {
     private Long userId;
-    private String publicKey;
-    private String privateKey;
+    private String userName;
+    private String email;
+    private String password;
+    private String accessToken;
     private String refreshToken;
-    private String status;
-    private Date createDate;
-
 }

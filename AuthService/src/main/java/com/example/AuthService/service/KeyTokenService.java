@@ -7,7 +7,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 public interface KeyTokenService {
-    BaseOutDTO createNewKeyToken (KeyPairDTO keyPair, Long userId);
+    BaseOutDTO createNewKeyToken (KeyPairDTO keyPair, Long userId,String refreshToken );
     KeyPairDTO getKeyPair();
     PublicKey generateJwtKeyDecryption(String jwtPublicKey);
     PrivateKey generateJwtKeyEncryption(String jwtPrivateKey);
