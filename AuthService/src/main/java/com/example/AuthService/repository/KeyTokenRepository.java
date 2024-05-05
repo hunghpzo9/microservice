@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface KeyTokenRepository extends JpaRepository<KeyToken,Long>,KeyTokenCustomRepository{
+    KeyToken findByUserId(Long userId);
 
 }

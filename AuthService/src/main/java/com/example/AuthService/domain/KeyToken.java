@@ -23,6 +23,8 @@ public class KeyToken {
     private Long userId;
     @Column(name = "public_key")
     private String publicKey;
+    @Column(name = "private_key")
+    private String privateKey;
     @Column(name = "refresh_token")
     private String refreshToken;
     @Column(name = "status")
@@ -36,7 +38,9 @@ public class KeyToken {
     public KeyToken (KeyTokenDTO dto){
         this.id=dto.getId();
         this.userId=dto.getUserId();
+        this.createDate=dto.getCreateDate();
         this.publicKey=dto.getPublicKey();
+        this.privateKey=dto.getPrivateKey();
         this.refreshToken=dto.getRefreshToken();
         this.status=dto.getStatus();
     }

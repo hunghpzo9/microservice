@@ -40,8 +40,13 @@ public class BaseOutDTO {
     }
 
     public void setResponseInternalServerError(String code, String message) {
-        this.code = code;
+        setCodeAndMessage(code, message);
         this.httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
     }
+    public void setResponseAuthenticateFail(String code, String message) {
+        setCodeAndMessage(code, message);
+        this.httpStatus = HttpStatus.FORBIDDEN;
+    }
+
 
 }
