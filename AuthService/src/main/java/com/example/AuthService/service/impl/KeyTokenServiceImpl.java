@@ -22,8 +22,6 @@ import java.util.List;
 public class KeyTokenServiceImpl implements KeyTokenService {
     @Autowired
     private KeyTokenRepository keyTokenRepository;
-    @Autowired
-    private RefreshTokenUsedRepository refreshTokenUsedRepository;
 
     @Override
     public BaseOutDTO createNewKeyToken(KeyPairDTO keyPair, Long userId, String refreshToken) {
@@ -55,14 +53,10 @@ public class KeyTokenServiceImpl implements KeyTokenService {
             keyTokenDTO.setStatus(Const.Status.ACTIVE.name());
             keyTokenRepository.save(new KeyToken(keyTokenDTO));
 
-            RefreshTokenUsedDTO refreshTokenUsedDTO = new RefreshTokenUsedDTO();
-            refreshTokenUsedDTO.setStatus(Const.Status.ACTIVE.name());
-            refreshTokenUsedDTO.setUserId(userId);
-            refreshTokenUsedDTO.setToken(refreshToken);
-            refreshTokenUsedRepository.save(new RefreshTokenUsed(refreshTokenUsedDTO));
             outDTO.setResponseSuccess(Const.RESPONSE_CODE.SUCCESS, Const.RESPONSE_MESSAGE.SUCCESS);
         } catch (Exception e) {
             outDTO.setResponseInternalServerError(Const.RESPONSE_CODE.ERROR, Const.RESPONSE_MESSAGE.ERROR);
+        log.error(e.getMessage(),e);
         }
         return outDTO;
     }
@@ -72,19 +66,14 @@ public class KeyTokenServiceImpl implements KeyTokenService {
         BaseOutDTO outDTO = new BaseOutDTO();
         try {
             List<KeyToken> keyTokenList = keyTokenRepository.findByUserId(userId);
-            List<RefreshTokenUsed> refreshTokenUsedList = refreshTokenUsedRepository.findByUserId(userId);
             if (!keyTokenList.isEmpty()) {
                 keyTokenRepository.deleteAll(keyTokenList);
-            }
-            if (!refreshTokenUsedList.isEmpty()) {
-                refreshTokenUsedRepository.deleteAll(refreshTokenUsedList);
             }
             outDTO.setResponseSuccess(Const.RESPONSE_CODE.SUCCESS, Const.RESPONSE_MESSAGE.SUCCESS);
         } catch (Exception e) {
             outDTO.setResponseInternalServerError(Const.RESPONSE_CODE.ERROR, Const.RESPONSE_MESSAGE.ERROR);
+            log.error(e.getMessage(),e);
         }
         return outDTO;
     }
-
-
 }

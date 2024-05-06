@@ -35,7 +35,8 @@ public class Const {
         public static final String EMAIL_EXISTED = "EMAIL_EXISTED";
         public static final String EMAIL_INVALID = "EMAIL_INVALID";
         public static final String PASSWORD_WEAK = "PASSWORD_WEAK";
-
+        public static final String DETECTED_USED_TOKEN = "DETECTED_USED_TOKEN";
+        public static final String CREATED_TOKEN_OK = "CREATED_TOKEN_OK";
     }
 
     public static class KEY_PAIR {
@@ -49,6 +50,8 @@ public class Const {
     public static class API_HEADER {
         public static final String API_KEY = "x-api-key";
         public static final String CLIENT_ID = "x-client-id";
+        public static final String REFRESH_TOKEN = "x-refresh-token-id";
+        public static final String AUTHORIZATION = "x-authorize-id";
 
     }
     public enum PRODUCT_FIELD {
