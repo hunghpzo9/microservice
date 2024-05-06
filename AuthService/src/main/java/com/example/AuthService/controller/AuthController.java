@@ -2,11 +2,8 @@ package com.example.AuthService.controller;
 
 import com.example.AuthService.domain.dto.inDTO.LoginInDTO;
 import com.example.AuthService.domain.dto.inDTO.UserInDTO;
-import com.example.AuthService.domain.dto.outDTO.BaseOutDTO;
+import com.example.AuthService.domain.dto.outDTO.*;
 import com.example.AuthService.domain.dto.UserDTO;
-import com.example.AuthService.domain.dto.outDTO.LoginOutDTO;
-import com.example.AuthService.domain.dto.outDTO.ResponseEntityOutDTO;
-import com.example.AuthService.domain.dto.outDTO.UserOutDTO;
 import com.example.AuthService.service.AuthService;
 import com.example.AuthService.service.UserService;
 import com.example.AuthService.utils.Const;
@@ -40,6 +37,20 @@ public class AuthController {
     public ResponseEntity<?> logout(@RequestHeader(Const.API_HEADER.CLIENT_ID) Long userId) {
 
         BaseOutDTO outDTO = authService.logout(userId);
+        return new ResponseEntityOutDTO(outDTO);
+    }
+    @GetMapping("/handlerRefreshToken")
+    public ResponseEntity<?> handlerRefreshToken(@RequestHeader(Const.API_HEADER.CLIENT_ID) Long userId,
+                                                 @RequestHeader(Const.API_HEADER.REFRESH_TOKEN) String refreshToken) {
+
+        TokenOutDTO outDTO = authService.handlerRefreshToken(userId,refreshToken);
+        return new ResponseEntityOutDTO(outDTO);
+    }
+    @GetMapping("/authentication")
+    public ResponseEntity<?> authentication(@RequestHeader(Const.API_HEADER.CLIENT_ID) Long userId,
+                                                 @RequestHeader(Const.API_HEADER.AUTHORIZATION) String accessToken) {
+
+        BaseOutDTO outDTO = authService.authentication(userId,accessToken);
         return new ResponseEntityOutDTO(outDTO);
     }
 }

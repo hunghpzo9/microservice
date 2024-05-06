@@ -1,6 +1,7 @@
 package com.example.AuthService.service.impl;
 
 import com.example.AuthService.domain.dto.KeyPairDTO;
+import com.example.AuthService.domain.dto.UserDTO;
 import com.example.AuthService.service.AsymmetricKeyService;
 import com.example.AuthService.service.JWTService;
 import com.example.AuthService.service.KeyTokenService;
@@ -41,19 +42,25 @@ public class JWTServiceImpl implements JWTService {
                     .setExpiration(expireDate)
                     .signWith(SignatureAlgorithm.RS256, asymmetricKeyService.generateJwtKeyEncryption(keyPair.getPrivateKey())).compact();
 
-//            var claims = Jwts.parser().
-//                    setSigningKey(keyTokenService.generateJwtKeyDecryption(keyPair.getPublicKey()))
-//                    .parseClaimsJws(token)
-//                    .getBody();
-//
-//            System.out.println("Subject: " + claims.getSubject());
-//            System.out.println("Issued At: " + claims.getIssuedAt());
-//            System.out.println("Issued At: " + claims.getExpiration());
-
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
         }
         return token;
+    }
+
+    @Override
+    public UserDTO verifyJWT(String token, String publicKey) {
+        UserDTO userDTO = new UserDTO();
+        try {
+            var claims = Jwts.parser().
+                    setSigningKey(asymmetricKeyService.generateJwtKeyDecryption(publicKey))
+                    .parseClaimsJws(token)
+                    .getBody();
+            System.out.println(claims);
+        }catch (Exception ex){
+            log.error(ex.getMessage(),ex);
+        }
+        return userDTO;
     }
 
 

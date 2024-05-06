@@ -26,7 +26,7 @@ public class UserRepositoryImpl implements UserCustomRepository{
             sqlQuery.append(" AND status = :status");
             mapParam.put("status",status);
         }
-        if(mapParam.size() == 0){
+        if(mapParam.isEmpty()){
             sqlQuery.append( " AND 1=0 ");
         }
         sqlQuery.append( " LIMIT 1 ");

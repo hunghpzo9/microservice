@@ -1,10 +1,12 @@
 package com.example.AuthService.domain.dto;
 
+import com.example.AuthService.domain.RefreshTokenUsed;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -17,5 +19,4 @@ public class KeyTokenDTO {
     private String refreshToken;
     private String status;
     private Date createDate;
-
 }

@@ -2,15 +2,14 @@ package com.example.AuthService.service.impl;
 
 import com.example.AuthService.domain.RefreshTokenUsed;
 import com.example.AuthService.domain.User;
-import com.example.AuthService.domain.dto.KeyPairDTO;
-import com.example.AuthService.domain.dto.LoginDTO;
-import com.example.AuthService.domain.dto.RefreshTokenUsedDTO;
-import com.example.AuthService.domain.dto.UserDTO;
+import com.example.AuthService.domain.dto.*;
 import com.example.AuthService.domain.dto.inDTO.LoginInDTO;
 import com.example.AuthService.domain.dto.inDTO.UserInDTO;
 import com.example.AuthService.domain.dto.outDTO.BaseOutDTO;
 import com.example.AuthService.domain.dto.outDTO.LoginOutDTO;
+import com.example.AuthService.domain.dto.outDTO.TokenOutDTO;
 import com.example.AuthService.domain.dto.outDTO.UserOutDTO;
+import com.example.AuthService.repository.KeyTokenRepository;
 import com.example.AuthService.repository.RefreshTokenUsedRepository;
 import com.example.AuthService.repository.UserRepository;
 import com.example.AuthService.service.*;
@@ -22,9 +21,11 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.tokens.KeyToken;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -41,7 +42,10 @@ public class AuthServiceImpl implements AuthService {
     private RefreshTokenUsedRepository refreshTokenUsedRepository;
     @Autowired
     private AsymmetricKeyService asymmetricKeyService;
-
+    @Autowired
+    private KeyTokenRepository keyTokenRepository;
+    @Autowired
+    private RefreshTokenUsedService refreshTokenUsedService;
     @Override
     public UserOutDTO signUp(UserInDTO inDTO) {
         UserOutDTO outDTO = new UserOutDTO();
@@ -169,8 +173,10 @@ public class AuthServiceImpl implements AuthService {
                 outDTO.setResponseBadRequest(Const.RESPONSE_CODE.DATA_INVALID, Const.RESPONSE_MESSAGE.DATA_INVALID);
                 return outDTO;
             }
-            BaseOutDTO deleteTokenOutDTO = keyTokenService.deleteAllKeyToken(userId);
-            if (!deleteTokenOutDTO.getCode().equals(Const.RESPONSE_CODE.SUCCESS)) {
+            BaseOutDTO deleteKeyTokenOut = keyTokenService.deleteAllKeyToken(userId);
+            BaseOutDTO deleteUsedTokenOut =  refreshTokenUsedService.deleteAllUsedToken(userId);
+            if (!deleteKeyTokenOut.getCode().equals(Const.RESPONSE_CODE.SUCCESS)||
+                    !deleteUsedTokenOut.getCode().equals(Const.RESPONSE_CODE.SUCCESS)) {
                 outDTO.setResponseInternalServerError(Const.RESPONSE_CODE.ERROR, Const.RESPONSE_MESSAGE.ERROR);
             }
             outDTO.setResponseSuccess(Const.RESPONSE_CODE.SUCCESS, Const.RESPONSE_MESSAGE.SUCCESS);
@@ -179,5 +185,60 @@ public class AuthServiceImpl implements AuthService {
             log.error(ex.getMessage());
         }
         return outDTO;
+    }
+
+    @Override
+    public TokenOutDTO handlerRefreshToken(Long userId, String refreshToken) {
+        TokenOutDTO outDTO = new TokenOutDTO();
+        try {
+            if (userId == null || DataUtils.isNullOrEmpty(refreshToken)) {
+                outDTO.setResponseBadRequest(Const.RESPONSE_CODE.DATA_INVALID, Const.RESPONSE_MESSAGE.DATA_INVALID);
+                return outDTO;
+            }
+
+            List<RefreshTokenUsed> list = refreshTokenUsedRepository.findByUserId(userId);
+            if(list.stream().anyMatch(usedToken -> usedToken.getToken().equals(refreshToken))){
+                outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.DETECTED_USED_TOKEN);
+                return outDTO;
+            }
+
+            List<KeyTokenDTO> keyToken = keyTokenRepository.findKeyTokenByUserId(userId,Const.Status.ACTIVE.name());
+            if(keyToken.isEmpty()){
+                outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.DATA_NOT_FOUND);
+                return outDTO;
+            }
+
+            Optional<User> user = userRepository.findById(userId);
+            if(user.isEmpty()){
+                outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.DATA_NOT_FOUND);
+                return outDTO;
+            }
+
+            KeyPairDTO keyPair = asymmetricKeyService.getKeyPair();
+            if (keyPair == null) {
+                outDTO.setResponseInternalServerError(Const.RESPONSE_CODE.ERROR, Const.RESPONSE_MESSAGE.ERROR);
+            }
+
+            String newAccessToken = jwtService.generateToken(userId.toString(), keyPair, Const.TOKEN.ACCESS_TOKEN);
+            String newRefreshToken = jwtService.generateToken(userId.toString(), keyPair, Const.TOKEN.REFRESH_TOKEN);
+            keyTokenService.createNewKeyToken(keyPair, userId, newRefreshToken);
+            refreshTokenUsedService.addNewUsedToken(userId,refreshToken);
+
+            TokenDTO tokenDTO = new TokenDTO();
+            tokenDTO.setAccessToken(newAccessToken);
+            tokenDTO.setRefreshToken(newRefreshToken);
+
+            outDTO.setTokenDTO(tokenDTO);
+            outDTO.setResponseCreated(Const.RESPONSE_CODE.CREATED, Const.RESPONSE_MESSAGE.CREATED_TOKEN_OK);
+        } catch (Exception ex) {
+            outDTO.setResponseInternalServerError(Const.RESPONSE_CODE.ERROR, Const.RESPONSE_MESSAGE.ERROR);
+            log.error(ex.getMessage());
+        }
+        return outDTO;
+    }
+
+    @Override
+    public BaseOutDTO authentication(Long userId, String accessToken) {
+        return null;
     }
 }
