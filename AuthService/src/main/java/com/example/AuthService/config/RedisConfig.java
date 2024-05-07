@@ -1,4 +1,4 @@
-package com.example.point.service.config;
+package com.example.AuthService.config;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
