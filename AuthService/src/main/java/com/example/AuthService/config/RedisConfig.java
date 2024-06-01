@@ -14,6 +14,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 public class RedisConfig {
     @Bean(destroyMethod = "shutdown")
     RedissonClient redisson() {
+        //redis config
         Config config = new Config();
         config.useClusterServers()
                 .setScanInterval(2000) // adjust the scan interval if needed
