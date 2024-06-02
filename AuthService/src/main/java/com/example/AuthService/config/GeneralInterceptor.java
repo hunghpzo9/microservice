@@ -12,10 +12,12 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class GeneralInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String clientIpAddress = request.getHeader("X-Forwarded-For");
-        int clientPort = Integer.parseInt(request.getHeader("X-Forwarded-Port"));
-        log.info("AUTH SERVICE |Client IP Address: " + clientIpAddress);
-        log.info("AUTH SERVICE |Client IP port: " + clientPort);
+        if(request.getHeader("X-Forwarded-For") != null){
+            String clientIpAddress = request.getHeader("X-Forwarded-For");
+            int clientPort = Integer.parseInt(request.getHeader("X-Forwarded-Port"));
+            log.info("AUTH SERVICE |Client IP Address: " + clientIpAddress);
+            log.info("AUTH SERVICE |Client IP port: " + clientPort);
+        }
         return HandlerInterceptor.super.preHandle(request, response, handler);
     }
 
