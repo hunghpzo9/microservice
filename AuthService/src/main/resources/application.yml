@@ -31,3 +31,44 @@ error-codes:
   PASSWORD_WEAK: 400
   EMAIL_EXISTED: 400
   INTERNAL_ERROR: 500
+
+redisson:
+  clusterServersConfig:
+    nodeAddresses:
+      - redis://192.168.1.10:8021
+      - redis://192.168.1.10:8022
+      - redis://192.168.1.10:8023
+      - redis://192.168.1.11:8021
+      - redis://192.168.1.11:8022
+      - redis://192.168.1.11:8023
+      - redis://192.168.1.12:8021
+      - redis://192.168.1.12:8022
+      - redis://192.168.1.12:8023
+    scanInterval: 2000
+    password: "Redis@2024"
+    retryAttempts: 1
+    retryInterval: 2000
+    connectTimeout: 500
+    timeout: 3000
+    masterConnectionPoolSize: 64
+    slaveConnectionPoolSize: 64
+
+#clusterServersConfig:
+#  nodeAddresses:
+#    - redis://192.168.1.10:8021
+#    - redis://192.168.1.10:8022
+#    - redis://192.168.1.10:8023
+#    - redis://192.168.1.11:8021
+#    - redis://192.168.1.11:8022
+#    - redis://192.168.1.11:8023
+#    - redis://192.168.1.12:8021
+#    - redis://192.168.1.12:8022
+#    - redis://192.168.1.12:8023
+#  scanInterval: 2000
+#  password: "Redis@2024"
+#  retryAttempts: 5
+#  retryInterval: 2000
+#  connectTimeout: 10000
+#  timeout: 3000
+#  masterConnectionPoolSize: 64
+#  slaveConnectionPoolSize: 64
