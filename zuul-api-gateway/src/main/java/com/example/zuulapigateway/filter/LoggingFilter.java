@@ -22,6 +22,7 @@ public class LoggingFilter implements GlobalFilter, Ordered {
         log.info("API GATEWAY | Client IP Address: " + clientIpAddress);
         log.info("API GATEWAY | Client IP port: " + clientPort);
         //add rate limit here
+        //Simple rate limit for total resource (only 1000 request/sec)
         return chain.filter(exchange);
     }
 
