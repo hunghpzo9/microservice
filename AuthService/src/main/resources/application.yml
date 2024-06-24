@@ -48,7 +48,7 @@ redisson:
     password: "Redis@2024"
     retryAttempts: 1
     retryInterval: 2000
-    connectTimeout: 500
+    connectTimeout: 100
     timeout: 3000
     masterConnectionPoolSize: 64
     slaveConnectionPoolSize: 64

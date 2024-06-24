@@ -39,14 +39,14 @@ public class AuthController {
         BaseOutDTO outDTO = authService.logout(userId);
         return new ResponseEntityOutDTO(outDTO);
     }
-    @GetMapping("/handlerRefreshToken")
+    @PostMapping("/handlerRefreshToken")
     public ResponseEntity<?> handlerRefreshToken(@RequestHeader(Const.API_HEADER.CLIENT_ID) Long userId,
                                                  @RequestHeader(Const.API_HEADER.REFRESH_TOKEN) String refreshToken) {
 
         TokenOutDTO outDTO = authService.handlerRefreshToken(userId,refreshToken);
         return new ResponseEntityOutDTO(outDTO);
     }
-    @GetMapping("/authentication")
+    @PostMapping("/authentication")
     public ResponseEntity<?> authentication(@RequestHeader(Const.API_HEADER.CLIENT_ID) Long userId,
                                                  @RequestHeader(Const.API_HEADER.AUTHORIZATION) String accessToken) {
 
