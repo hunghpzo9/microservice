@@ -24,6 +24,7 @@ public class Const {
     public static class RESPONSE_MESSAGE {
         public static final String SUCCESS = "Success";
         public static final String AUTHENTICATE_FAIL = "AUTHENTICATE_FAIL";
+        public static final String AUTHENTICATE_SUCCESS = "AUTHENTICATE_SUCCESS";
         public static final String PASSWORD_INCORRECT = "PASSWORD_INCORRECT";
 
         public static final String AUTHORIZE_FAIL = "AUTHORIZE_FAIL";

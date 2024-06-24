@@ -35,7 +35,7 @@ public class JWTServiceImpl implements JWTService {
     public String generateToken(String payload, KeyPairDTO keyPair, Const.TOKEN tokenEnum) {
         String token = null;
         try {
-            Date expireDate = new Date(System.currentTimeMillis()+ (tokenEnum == Const.TOKEN.ACCESS_TOKEN ? ACCESS_TOKEN_VALIDITY : REFRESH_TOKEN_VALIDITY));
+            Date expireDate = new Date(System.currentTimeMillis() + (tokenEnum == Const.TOKEN.ACCESS_TOKEN ? ACCESS_TOKEN_VALIDITY : REFRESH_TOKEN_VALIDITY));
             token = Jwts.builder()
                     .setSubject(payload)
                     .setIssuedAt(new Date())
@@ -50,15 +50,18 @@ public class JWTServiceImpl implements JWTService {
 
     @Override
     public UserDTO verifyJWT(String token, String publicKey) {
-        UserDTO userDTO = new UserDTO();
+        UserDTO userDTO = null;
         try {
             var claims = Jwts.parser().
                     setSigningKey(asymmetricKeyService.generateJwtKeyDecryption(publicKey))
                     .parseClaimsJws(token)
                     .getBody();
-            System.out.println(claims);
-        }catch (Exception ex){
-            log.error(ex.getMessage(),ex);
+            if (claims.getExpiration().compareTo(new Date()) >= 0) {
+                userDTO = new UserDTO();
+                userDTO.setId(Long.valueOf(claims.getSubject()));
+            }
+        } catch (Exception ex) {
+            log.error(ex.getMessage(), ex);
         }
         return userDTO;
     }

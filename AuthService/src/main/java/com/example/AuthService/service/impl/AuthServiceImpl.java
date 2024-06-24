@@ -46,6 +46,7 @@ public class AuthServiceImpl implements AuthService {
     private KeyTokenRepository keyTokenRepository;
     @Autowired
     private RefreshTokenUsedService refreshTokenUsedService;
+
     @Override
     public UserOutDTO signUp(UserInDTO inDTO) {
         UserOutDTO outDTO = new UserOutDTO();
@@ -174,8 +175,8 @@ public class AuthServiceImpl implements AuthService {
                 return outDTO;
             }
             BaseOutDTO deleteKeyTokenOut = keyTokenService.deleteAllKeyToken(userId);
-            BaseOutDTO deleteUsedTokenOut =  refreshTokenUsedService.deleteAllUsedToken(userId);
-            if (!deleteKeyTokenOut.getCode().equals(Const.RESPONSE_CODE.SUCCESS)||
+            BaseOutDTO deleteUsedTokenOut = refreshTokenUsedService.deleteAllUsedToken(userId);
+            if (!deleteKeyTokenOut.getCode().equals(Const.RESPONSE_CODE.SUCCESS) ||
                     !deleteUsedTokenOut.getCode().equals(Const.RESPONSE_CODE.SUCCESS)) {
                 outDTO.setResponseInternalServerError(Const.RESPONSE_CODE.ERROR, Const.RESPONSE_MESSAGE.ERROR);
             }
@@ -197,19 +198,20 @@ public class AuthServiceImpl implements AuthService {
             }
 
             List<RefreshTokenUsed> list = refreshTokenUsedRepository.findByUserId(userId);
-            if(list.stream().anyMatch(usedToken -> usedToken.getToken().equals(refreshToken))){
+            if (list.stream().anyMatch(usedToken -> usedToken.getToken().equals(refreshToken))) {
+                logout(userId);
                 outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.DETECTED_USED_TOKEN);
                 return outDTO;
             }
 
-            List<KeyTokenDTO> keyToken = keyTokenRepository.findKeyTokenByUserId(userId,Const.Status.ACTIVE.name());
-            if(keyToken.isEmpty()){
+            List<KeyTokenDTO> keyToken = keyTokenRepository.findKeyTokenByUserId(userId, Const.Status.ACTIVE.name());
+            if (keyToken.isEmpty()) {
                 outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.DATA_NOT_FOUND);
                 return outDTO;
             }
 
             Optional<User> user = userRepository.findById(userId);
-            if(user.isEmpty()){
+            if (user.isEmpty()) {
                 outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.DATA_NOT_FOUND);
                 return outDTO;
             }
@@ -222,7 +224,7 @@ public class AuthServiceImpl implements AuthService {
             String newAccessToken = jwtService.generateToken(userId.toString(), keyPair, Const.TOKEN.ACCESS_TOKEN);
             String newRefreshToken = jwtService.generateToken(userId.toString(), keyPair, Const.TOKEN.REFRESH_TOKEN);
             keyTokenService.createNewKeyToken(keyPair, userId, newRefreshToken);
-            refreshTokenUsedService.addNewUsedToken(userId,refreshToken);
+            refreshTokenUsedService.addNewUsedToken(userId, refreshToken);
 
             TokenDTO tokenDTO = new TokenDTO();
             tokenDTO.setAccessToken(newAccessToken);
@@ -239,7 +241,31 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public BaseOutDTO authentication(Long userId, String accessToken) {
-        //authen here
-        return null;
+        BaseOutDTO outDTO = new BaseOutDTO();
+        try {
+            //check refresh token optional ?
+            if (userId == null || DataUtils.isNullOrEmpty(accessToken)) {
+                outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.AUTHENTICATE_FAIL);
+                return outDTO;
+            }
+
+            List<KeyTokenDTO> keyTokenDTO = keyTokenRepository.findKeyTokenByUserId(userId, Const.Status.ACTIVE.name());
+            if (keyTokenDTO.isEmpty()) {
+                outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.DATA_NOT_FOUND);
+                return outDTO;
+            }
+
+            UserDTO decodeUser = jwtService.verifyJWT(accessToken, keyTokenDTO.get(0).getPublicKey());
+            if (decodeUser!= null && !userId.equals(decodeUser.getId())){
+                outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.AUTHENTICATE_FAIL);
+                return outDTO;
+            }
+            outDTO.setResponseSuccess(Const.RESPONSE_CODE.SUCCESS, Const.RESPONSE_MESSAGE.AUTHENTICATE_SUCCESS);
+        } catch (Exception ex) {
+            outDTO.setResponseInternalServerError(Const.RESPONSE_CODE.ERROR, Const.RESPONSE_MESSAGE.ERROR);
+            log.error(ex.getMessage());
+        }
+
+        return outDTO;
     }
 }
