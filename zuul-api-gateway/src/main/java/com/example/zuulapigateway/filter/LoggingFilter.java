@@ -21,7 +21,7 @@ public class LoggingFilter implements GlobalFilter, Ordered {
         int clientPort = remoteAddress.getPort();
         log.info("API GATEWAY | Client IP Address: " + clientIpAddress);
         log.info("API GATEWAY | Client IP port: " + clientPort);
-        //rate limit in here
+
         return chain.filter(exchange);
     }
 
