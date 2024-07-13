@@ -3,6 +3,7 @@ package com.example.AuthService.service.impl;
 import com.example.AuthService.domain.RefreshTokenUsed;
 import com.example.AuthService.domain.User;
 import com.example.AuthService.domain.dto.*;
+import com.example.AuthService.domain.dto.inDTO.AuthenticationDTO;
 import com.example.AuthService.domain.dto.inDTO.LoginInDTO;
 import com.example.AuthService.domain.dto.inDTO.UserInDTO;
 import com.example.AuthService.domain.dto.outDTO.BaseOutDTO;
@@ -189,9 +190,11 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public TokenOutDTO handlerRefreshToken(Long userId, String refreshToken) {
+    public TokenOutDTO handlerRefreshToken(AuthenticationDTO dto) {
         TokenOutDTO outDTO = new TokenOutDTO();
         try {
+            Long userId = dto.getUserId();
+            String refreshToken = dto.getRefreshToken();
             if (userId == null || DataUtils.isNullOrEmpty(refreshToken)) {
                 outDTO.setResponseBadRequest(Const.RESPONSE_CODE.DATA_INVALID, Const.RESPONSE_MESSAGE.DATA_INVALID);
                 return outDTO;
@@ -207,6 +210,11 @@ public class AuthServiceImpl implements AuthService {
             List<KeyTokenDTO> keyToken = keyTokenRepository.findKeyTokenByUserId(userId, Const.Status.ACTIVE.name());
             if (keyToken.isEmpty()) {
                 outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.DATA_NOT_FOUND);
+                return outDTO;
+            }
+            String userCurrentRefreshToken = keyToken.get(0).getRefreshToken();
+            if(!userCurrentRefreshToken.equals(refreshToken)){
+                outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.REFRESH_TOKEN_INVALID);
                 return outDTO;
             }
 
@@ -240,9 +248,11 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public BaseOutDTO authentication(Long userId, String accessToken) {
+    public BaseOutDTO authentication(AuthenticationDTO dto) {
         BaseOutDTO outDTO = new BaseOutDTO();
         try {
+            Long userId = dto.getUserId();
+            String accessToken = dto.getAccessToken();
             //check refresh token optional ?
             if (userId == null || DataUtils.isNullOrEmpty(accessToken)) {
                 outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.AUTHENTICATE_FAIL);

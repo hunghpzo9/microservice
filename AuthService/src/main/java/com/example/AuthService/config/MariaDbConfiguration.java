@@ -1,4 +1,4 @@
-package com.example.point.service.config;
+package com.example.AuthService.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;

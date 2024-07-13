@@ -38,6 +38,8 @@ public class Const {
         public static final String PASSWORD_WEAK = "PASSWORD_WEAK";
         public static final String DETECTED_USED_TOKEN = "DETECTED_USED_TOKEN";
         public static final String CREATED_TOKEN_OK = "CREATED_TOKEN_OK";
+        public static final String REFRESH_TOKEN_INVALID = "REFRESH_TOKEN_INVALID";
+
     }
 
     public static class KEY_PAIR {
