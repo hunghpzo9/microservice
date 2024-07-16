@@ -1,6 +1,7 @@
 package com.example.AuthService.controller;
 
 import com.example.AuthService.domain.dto.inDTO.AuthenticationDTO;
+import com.example.AuthService.domain.dto.inDTO.BaseRequestDTO;
 import com.example.AuthService.domain.dto.inDTO.LoginInDTO;
 import com.example.AuthService.domain.dto.inDTO.UserInDTO;
 import com.example.AuthService.domain.dto.outDTO.*;
@@ -9,6 +10,7 @@ import com.example.AuthService.service.AuthService;
 import com.example.AuthService.service.UserService;
 import com.example.AuthService.utils.Const;
 import com.example.AuthService.utils.DataUtils;
+import com.example.AuthService.utils.NonceUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,33 +40,34 @@ public class AuthController {
         return new ResponseEntityOutDTO(outDTO);
     }
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestHeader(Const.API_HEADER.CLIENT_ID) Long userId) {
+    public ResponseEntity<?> logout(@RequestBody BaseRequestDTO dto) {
 
-        BaseOutDTO outDTO = authService.logout(userId);
+        BaseOutDTO outDTO = authService.logout(dto);
         return new ResponseEntityOutDTO(outDTO);
     }
     @PostMapping("/handlerRefreshToken")
-    public ResponseEntity<?> handlerRefreshToken(AuthenticationDTO dto) {
+    public ResponseEntity<?> handlerRefreshToken(@RequestBody AuthenticationDTO dto) {
 
         TokenOutDTO outDTO = authService.handlerRefreshToken(dto);
         return new ResponseEntityOutDTO(outDTO);
     }
     @PostMapping("/authentication")
-    public ResponseEntity<?> authentication(AuthenticationDTO dto) {
+    public ResponseEntity<?> authentication(@RequestBody AuthenticationDTO dto) {
 
         BaseOutDTO outDTO = authService.authentication(dto);
         return new ResponseEntityOutDTO(outDTO);
     }
     @PostMapping("/generateFakeData")
-    public ResponseEntity<?> generateFakeData(AuthenticationDTO dto) {
+    public ResponseEntity<?> generateFakeData() {
 
         BaseOutDTO outDTO = new BaseOutDTO();
-        Date date = new Date();
         String content = DataUtils.generateMD5("{\"email\":\"hun2g@gmail.com\",\"password\":\"Hung@951230\"}\n");
         String requestUri = "authService/generateFakeData";
-        String nonce = DataUtils.generateNonce("1247591471344500736",date.getTime());
+
+        //Generate nonce với sessionID và random number vì hacker đứng chính giữa có thể là sessionID khác
+        String nonce = NonceUtil.generateNonce("SessionId");
         String stringToSign = content + "\n" + requestUri +"\n" + nonce;
-        outDTO.setResponseSuccess("Ok",DataUtils.generateSignature("key",stringToSign));
+        outDTO.setResponseSuccess("Ok",nonce + "---"+content + "---"+DataUtils.generateSignature(Const.SECRET_KEY,stringToSign));
         return new ResponseEntityOutDTO(outDTO);
     }
 }

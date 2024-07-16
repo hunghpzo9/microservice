@@ -7,9 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationDTO {
-    Long userId;
+public class AuthenticationDTO extends BaseRequestDTO {
     String accessToken;
     String refreshToken;
-    String encryptedData;
+    String content;
+    String nonce;
+    String requestUri;
+    String signature;
 }

@@ -43,7 +43,7 @@ public class MariaDbConfiguration {
         LocalContainerEntityManagerFactoryBean em
                 = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource());
-        em.setPackagesToScan(new String[]{"com.example.point.service.domain"});
+        em.setPackagesToScan(new String[]{"com.example.AuthService.domain"});
         em.setJpaVendorAdapter(this.vendorAdapter());
         return em;
     }

@@ -39,7 +39,8 @@ public class Const {
         public static final String DETECTED_USED_TOKEN = "DETECTED_USED_TOKEN";
         public static final String CREATED_TOKEN_OK = "CREATED_TOKEN_OK";
         public static final String REFRESH_TOKEN_INVALID = "REFRESH_TOKEN_INVALID";
-
+        public static final String MISSING_PARAM = "MISSING_PARAM";
+        public static final String PARAM_MISMATCHED = "PARAM_MISMATCHED";
     }
 
     public static class KEY_PAIR {
@@ -114,6 +115,17 @@ public class Const {
         }
         //Also can check password equal domain, appname,
         return true;
+    }
+    public static final String SECRET_KEY = "SECRET_KEY";
+    public static final Long API_MAX_LIFETIME = 30000L * 1000;
+
+    public static class REDIS_FIELD{
+        public static final String NONCE = "nonce";
+        public static final String ACCESS_TOKEN = "refreshToken";
+        public static final String REFRESH_TOKEN = "accessToken";
+    }
+    public static class REDIS_KEY{
+        public static final String AUTH = "auth";
     }
 
 

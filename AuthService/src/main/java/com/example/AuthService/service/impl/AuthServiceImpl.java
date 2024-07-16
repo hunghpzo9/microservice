@@ -4,6 +4,7 @@ import com.example.AuthService.domain.RefreshTokenUsed;
 import com.example.AuthService.domain.User;
 import com.example.AuthService.domain.dto.*;
 import com.example.AuthService.domain.dto.inDTO.AuthenticationDTO;
+import com.example.AuthService.domain.dto.inDTO.BaseRequestDTO;
 import com.example.AuthService.domain.dto.inDTO.LoginInDTO;
 import com.example.AuthService.domain.dto.inDTO.UserInDTO;
 import com.example.AuthService.domain.dto.outDTO.BaseOutDTO;
@@ -17,16 +18,18 @@ import com.example.AuthService.service.*;
 import com.example.AuthService.utils.Const;
 import com.example.AuthService.utils.DataUtils;
 import com.example.AuthService.utils.IdGenerator;
+import com.example.AuthService.utils.NonceUtil;
+import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.yaml.snakeyaml.tokens.KeyToken;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -47,6 +50,8 @@ public class AuthServiceImpl implements AuthService {
     private KeyTokenRepository keyTokenRepository;
     @Autowired
     private RefreshTokenUsedService refreshTokenUsedService;
+    @Autowired
+    RedisService redisService;
 
     @Override
     public UserOutDTO signUp(UserInDTO inDTO) {
@@ -168,9 +173,10 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public BaseOutDTO logout(Long userId) {
+    public BaseOutDTO logout(BaseRequestDTO dto) {
         BaseOutDTO outDTO = new BaseOutDTO();
         try {
+            Long userId = dto.getUserId();
             if (userId == null) {
                 outDTO.setResponseBadRequest(Const.RESPONSE_CODE.DATA_INVALID, Const.RESPONSE_MESSAGE.DATA_INVALID);
                 return outDTO;
@@ -202,7 +208,7 @@ public class AuthServiceImpl implements AuthService {
 
             List<RefreshTokenUsed> list = refreshTokenUsedRepository.findByUserId(userId);
             if (list.stream().anyMatch(usedToken -> usedToken.getToken().equals(refreshToken))) {
-                logout(userId);
+                logout(dto);
                 outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.DETECTED_USED_TOKEN);
                 return outDTO;
             }
@@ -213,7 +219,7 @@ public class AuthServiceImpl implements AuthService {
                 return outDTO;
             }
             String userCurrentRefreshToken = keyToken.get(0).getRefreshToken();
-            if(!userCurrentRefreshToken.equals(refreshToken)){
+            if (!userCurrentRefreshToken.equals(refreshToken)) {
                 outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.REFRESH_TOKEN_INVALID);
                 return outDTO;
             }
@@ -251,6 +257,45 @@ public class AuthServiceImpl implements AuthService {
     public BaseOutDTO authentication(AuthenticationDTO dto) {
         BaseOutDTO outDTO = new BaseOutDTO();
         try {
+
+            if (StringUtil.isEmpty(dto.getContent()) ||
+                    StringUtil.isEmpty(dto.getRequestUri()) ||
+                    StringUtil.isEmpty(dto.getNonce()) ||
+                    StringUtil.isEmpty(dto.getSignature()) ||
+                    dto.getUserId() == null){
+                outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.MISSING_PARAM);
+                return outDTO;
+            }
+
+            String content = dto.getContent();
+            String requestUri = dto.getRequestUri();
+            String nonce = dto.getNonce();
+
+            String stringToSign = content + "\n" + requestUri + "\n" + nonce;
+
+            //Kiểm tra signature, verify quá trình transmission ko bị lệch dữ liệu
+            if (!DataUtils.verifySignature(Const.SECRET_KEY, stringToSign, dto.getSignature())) {
+                outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.PARAM_MISMATCHED);
+                return outDTO;
+            }
+
+            nonce = NonceUtil.decryptNonce(nonce);
+
+            //Tối đa lifetime của request này để ko bị gọi liên tục nhiều lần
+            if (dto.getTimestamp() + Const.API_MAX_LIFETIME < System.currentTimeMillis()) {
+                log.error("API out of timestamp");
+                outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.AUTHENTICATE_FAIL);
+                return outDTO;
+            }
+
+            //check nonce
+            if (null != redisService.get(nonce)) {
+                log.error("Nonce existed");
+                outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.AUTHENTICATE_FAIL);
+                return outDTO;
+            }
+            redisService.setNx(nonce,"1",Const.API_MAX_LIFETIME, TimeUnit.MILLISECONDS);
+
             Long userId = dto.getUserId();
             String accessToken = dto.getAccessToken();
             //check refresh token optional ?
@@ -266,7 +311,7 @@ public class AuthServiceImpl implements AuthService {
             }
 
             UserDTO decodeUser = jwtService.verifyJWT(accessToken, keyTokenDTO.get(0).getPublicKey());
-            if (decodeUser!= null && !userId.equals(decodeUser.getId())){
+            if (decodeUser != null && !userId.equals(decodeUser.getId())) {
                 outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.AUTHENTICATE_FAIL);
                 return outDTO;
             }

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginInDTO {
+public class LoginInDTO extends BaseRequestDTO {
     private String email;
     private String password;
     private Long refreshToken;
