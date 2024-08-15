@@ -3,10 +3,12 @@ package com.example.AuthService.service.impl;
 import com.example.AuthService.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;
+import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -68,6 +70,31 @@ public class RedisServiceImpl implements RedisService {
         return false;
 
     }
+
+    @Override
+    public boolean hset(String key, Map<String,String> map, long timeToLive, TimeUnit timeUnit) {
+        try {
+            RMap<String, String> rMap = redisson.getMap(key);
+            rMap.putAll(map);
+           return rMap.expire(timeToLive, timeUnit);
+        } catch (Exception ex) {
+            log.error(ex.getMessage(), ex);
+        }
+        return false;
+    }
+
+    @Override
+    public String hget(String key, String field) {
+        try {
+            RMap<String, String> rMap = redisson.getMap(key);
+
+            return rMap.get(field);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     @Override
     public void deleteValue(String key) {
         try {

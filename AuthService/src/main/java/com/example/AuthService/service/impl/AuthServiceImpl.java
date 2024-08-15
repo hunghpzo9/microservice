@@ -22,6 +22,7 @@ import com.example.AuthService.utils.NonceUtil;
 import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.bouncycastle.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -181,6 +182,7 @@ public class AuthServiceImpl implements AuthService {
                 outDTO.setResponseBadRequest(Const.RESPONSE_CODE.DATA_INVALID, Const.RESPONSE_MESSAGE.DATA_INVALID);
                 return outDTO;
             }
+            redisService.deleteValue("user:"+userId);
             BaseOutDTO deleteKeyTokenOut = keyTokenService.deleteAllKeyToken(userId);
             BaseOutDTO deleteUsedTokenOut = refreshTokenUsedService.deleteAllUsedToken(userId);
             if (!deleteKeyTokenOut.getCode().equals(Const.RESPONSE_CODE.SUCCESS) ||
@@ -213,26 +215,22 @@ public class AuthServiceImpl implements AuthService {
                 return outDTO;
             }
 
-            List<KeyTokenDTO> keyToken = keyTokenRepository.findKeyTokenByUserId(userId, Const.Status.ACTIVE.name());
-            if (keyToken.isEmpty()) {
+            //Cache Redis necessary userInfo + couple keyToken
+            UserDTO user = userService.getUserInfo(userId);
+            if (null == user) {
                 outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.DATA_NOT_FOUND);
                 return outDTO;
             }
-            String userCurrentRefreshToken = keyToken.get(0).getRefreshToken();
+            String userCurrentRefreshToken = user.getRefreshToken();
             if (!userCurrentRefreshToken.equals(refreshToken)) {
                 outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.REFRESH_TOKEN_INVALID);
-                return outDTO;
-            }
-
-            Optional<User> user = userRepository.findById(userId);
-            if (user.isEmpty()) {
-                outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.DATA_NOT_FOUND);
                 return outDTO;
             }
 
             KeyPairDTO keyPair = asymmetricKeyService.getKeyPair();
             if (keyPair == null) {
                 outDTO.setResponseInternalServerError(Const.RESPONSE_CODE.ERROR, Const.RESPONSE_MESSAGE.ERROR);
+                return outDTO;
             }
 
             String newAccessToken = jwtService.generateToken(userId.toString(), keyPair, Const.TOKEN.ACCESS_TOKEN);
@@ -279,10 +277,12 @@ public class AuthServiceImpl implements AuthService {
                 return outDTO;
             }
 
-            nonce = NonceUtil.decryptNonce(nonce);
+            String[] nonceData= Strings.split( NonceUtil.decryptNonce(nonce),'-');
+            String sessionID = nonceData[0];
+            long timeStamp = Long.valueOf(nonceData[1]);
 
             //Tối đa lifetime của request này để ko bị gọi liên tục nhiều lần
-            if (dto.getTimestamp() + Const.API_MAX_LIFETIME < System.currentTimeMillis()) {
+            if (timeStamp + Const.API_MAX_LIFETIME < System.currentTimeMillis()) {
                 log.error("API out of timestamp");
                 outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.AUTHENTICATE_FAIL);
                 return outDTO;
@@ -303,14 +303,18 @@ public class AuthServiceImpl implements AuthService {
                 outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.AUTHENTICATE_FAIL);
                 return outDTO;
             }
-
-            List<KeyTokenDTO> keyTokenDTO = keyTokenRepository.findKeyTokenByUserId(userId, Const.Status.ACTIVE.name());
-            if (keyTokenDTO.isEmpty()) {
+            UserDTO userDTO = userService.getUserInfo(userId);
+            if (userDTO==null) {
+                outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.DATA_NOT_FOUND);
+                return outDTO;
+            }
+            String keyTokenPublicKey = userDTO.getKeyTokenPublicKey();
+            if (StringUtil.isEmpty(keyTokenPublicKey)) {
                 outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.DATA_NOT_FOUND);
                 return outDTO;
             }
 
-            UserDTO decodeUser = jwtService.verifyJWT(accessToken, keyTokenDTO.get(0).getPublicKey());
+            UserDTO decodeUser = jwtService.verifyJWT(accessToken, keyTokenPublicKey);
             if (decodeUser != null && !userId.equals(decodeUser.getId())) {
                 outDTO.setResponseAuthenticateFail(Const.RESPONSE_CODE.AUTHENTICATE_FAIL, Const.RESPONSE_MESSAGE.AUTHENTICATE_FAIL);
                 return outDTO;

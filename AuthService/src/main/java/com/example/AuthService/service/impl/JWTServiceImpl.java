@@ -27,8 +27,11 @@ import java.util.Date;
 @Slf4j
 public class JWTServiceImpl implements JWTService {
     @Autowired
-    AsymmetricKeyService asymmetricKeyService;
+    private AsymmetricKeyService asymmetricKeyService;
+
+    //1 hour
     public static final long ACCESS_TOKEN_VALIDITY = 1000 * 60 * 60 * 1L;
+    //1 day
     public static final long REFRESH_TOKEN_VALIDITY = 1000 * 60 * 60 * 24L;
 
     @Override

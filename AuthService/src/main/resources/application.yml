@@ -48,7 +48,7 @@ redisson:
       - redis://192.168.1.12:8023
     scanInterval: 2000
     password: "Redis@2024"
-    retryAttempts: 1
+    retryAttempts: 0
     retryInterval: 2000
     connectTimeout: 100
     timeout: 3000

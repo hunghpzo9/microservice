@@ -12,5 +12,8 @@ public class UserDTO {
     private String password;
     private String email;
     private String status;
+    private String keyTokenPublicKey;
+    private String refreshToken;
+
 }
 

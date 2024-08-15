@@ -1,0 +1,46 @@
+Signup:
+1. Save username, password brcypt in database
+2. create new pair public/private and save to database
+3. createNew token
+
+Login:
+1. Check user existed in database
+2. Create new pair public/private 
+3. generate AT(1 hours) and RT(24 hours) using private key and save it to database. So that other system can use public key to decrypt the token
+
+Logout:
+1. deleted alltoken and usedToken
+
+HandelerRefreshToken (create new pair when AT expired):
+1. Check if RT used in database ==> If use mean that this RT is using by hacker ==> Force logout from all devices and deleted all token 
+2. Check if previous pairToken is in database
+3. Create new pair AccessToken and RefreshToken
+4. Save RT in usedToken 
+
+Authentication (In middle when calling any api):
+nonce = encrypt (sessionID + apiTimeStamp + randomNumber)
+Body: {
+    "userId":1247591471344500736,
+    "content":"91477f24dd92e11a920f7734cb23136c",
+    "requestUri": "authService/generateFakeData",
+    "nonce":"ECB47oRxLjXgDJyaa+vraA==",
+    "signature":"E/d6nkAvCHCAXBs6rWcxNtSbRdkwZUdl03y6BO0Qvjw="
+}
+
+1. verify signature with content, nonce,...using secret_key
+2. Check if apiTimeStamp is exceed from time
+3. decrypt nonce to get session ID
+4. Check if nonce is existed in redis, if existed then authen fail
+5. Verify token and userId
+
+
+cache (userInfo):
+userID, username, email, password, status
+sessionID: 40 bytes
+nonce: 30 bytes
+keyToken (publicKey, RT): 1KB
+
+Considering using gzip vs snappy:
+
+Gzip: compress more data, consume more cpu
+Snappy: compress less data, consume less cpu

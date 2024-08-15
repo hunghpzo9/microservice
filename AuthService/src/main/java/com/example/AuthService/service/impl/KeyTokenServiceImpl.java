@@ -5,10 +5,13 @@ import com.example.AuthService.domain.RefreshTokenUsed;
 import com.example.AuthService.domain.dto.KeyPairDTO;
 import com.example.AuthService.domain.dto.KeyTokenDTO;
 import com.example.AuthService.domain.dto.RefreshTokenUsedDTO;
+import com.example.AuthService.domain.dto.UserDTO;
 import com.example.AuthService.domain.dto.outDTO.BaseOutDTO;
 import com.example.AuthService.repository.KeyTokenRepository;
 import com.example.AuthService.repository.RefreshTokenUsedRepository;
 import com.example.AuthService.service.KeyTokenService;
+import com.example.AuthService.service.RedisService;
+import com.example.AuthService.service.UserService;
 import com.example.AuthService.utils.Const;
 import com.example.AuthService.utils.DataUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +25,8 @@ import java.util.List;
 public class KeyTokenServiceImpl implements KeyTokenService {
     @Autowired
     private KeyTokenRepository keyTokenRepository;
+    @Autowired
+    private RedisService redisService;
 
     @Override
     public BaseOutDTO createNewKeyToken(KeyPairDTO keyPair, Long userId, String refreshToken) {
@@ -46,12 +51,15 @@ public class KeyTokenServiceImpl implements KeyTokenService {
                 keyTokenDTO.setId(keyTokenList.get(0).getId());
                 keyTokenDTO.setCreateDate(keyTokenList.get(0).getCreateDate());
             }
+
             keyTokenDTO.setUserId(userId);
             keyTokenDTO.setPublicKey(keyPair.getPublicKey());
             keyTokenDTO.setPrivateKey(keyPair.getPrivateKey());
             keyTokenDTO.setRefreshToken(refreshToken);
             keyTokenDTO.setStatus(Const.Status.ACTIVE.name());
+
             keyTokenRepository.save(new KeyToken(keyTokenDTO));
+            redisService.deleteValue("user:"+userId);
 
             outDTO.setResponseSuccess(Const.RESPONSE_CODE.SUCCESS, Const.RESPONSE_MESSAGE.SUCCESS);
         } catch (Exception e) {

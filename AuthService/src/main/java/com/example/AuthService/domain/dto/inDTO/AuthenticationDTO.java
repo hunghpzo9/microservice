@@ -14,4 +14,5 @@ public class AuthenticationDTO extends BaseRequestDTO {
     String nonce;
     String requestUri;
     String signature;
+    String apiTimeStamp;
 }

@@ -123,6 +123,9 @@ public class Const {
         public static final String NONCE = "nonce";
         public static final String ACCESS_TOKEN = "refreshToken";
         public static final String REFRESH_TOKEN = "accessToken";
+        public static final String KEY_TOKEN = "keyToken";
+        public static final String USER_INFO = "userInfo";
+
     }
     public static class REDIS_KEY{
         public static final String AUTH = "auth";
